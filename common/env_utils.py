@@ -1,10 +1,13 @@
 import math
 import numpy as np
+import random as rand
 from shapely.geometry import Point
 from shapely.geometry import Polygon
 from geovoronoi import voronoi_regions_from_coords
 
 from common.env import Custom_Environment
+from common.env_config import square, heptagon, hexagon, pentagon
+from common.env_config import polygon_1, polygon_2, polygon_3, polygon_4, polygon_5, polygon_6, polygon_7, polygon_8
 
 
 def make_env(domain, num_agents, step_length, max_steps, reward_type):
@@ -13,6 +16,56 @@ def make_env(domain, num_agents, step_length, max_steps, reward_type):
         return env
 
     return _init
+
+
+def get_random_env():
+    num_agents = rand.randint(6, 9)
+
+    if num_agents == 6:
+        index = rand.randint(1, 3)
+        if index == 1:
+            env = Custom_Environment(**polygon_1)
+
+        elif index == 2:
+            env = Custom_Environment(**polygon_2)
+
+        else:
+            env = Custom_Environment(**pentagon)
+
+    elif num_agents == 7:
+        index = rand.randint(1, 3)
+        if index == 1:
+            env = Custom_Environment(**polygon_3)
+
+        elif index == 2:
+            env = Custom_Environment(**polygon_4)
+
+        else:
+            env = Custom_Environment(**hexagon)
+
+    elif num_agents == 8:
+        index = rand.randint(1, 3)
+        if index == 1:
+            env = Custom_Environment(**polygon_5)
+
+        elif index == 2:
+            env = Custom_Environment(**polygon_6)
+
+        else:
+            env = Custom_Environment(**heptagon)
+
+    else:
+        index = rand.randint(1, 3)
+        if index == 1:
+            env = Custom_Environment(**polygon_7)
+
+        elif index == 2:
+            env = Custom_Environment(**polygon_8)
+
+        else:
+            env = Custom_Environment(**square)
+
+    return env
 
 
 def voronoi_based_area(num_agents: int, state: np.ndarray, domain: Polygon) -> np.ndarray:

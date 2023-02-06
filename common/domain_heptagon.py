@@ -20,19 +20,20 @@ def rotate(pivot, point, angle):
     return np.array([qx, qy])
 
 
-class Hexagon(object):
-    def __init__(self, center=np.array([0, 0]), edge_length=10):
+class Heptagon(object):
+    def __init__(self, center=np.array([0, 0]), offset=10):
         self.center = center
-        self.edge_length = edge_length
+        self.center_distance = offset
 
-        self.A = np.array([center[0] + edge_length, center[1]])
-        self.B = rotate(center, self.A, -60)
-        self.C = rotate(center, self.B, -60)
-        self.D = rotate(center, self.C, -60)
-        self.E = rotate(center, self.D, -60)
-        self.F = rotate(center, self.E, -60)
+        self.A = np.array([center[0], center[1] - self.center_distance])
+        self.B = rotate(center, self.A, 360 / 7)
+        self.C = rotate(center, self.B, 360 / 7)
+        self.D = rotate(center, self.C, 360 / 7)
+        self.E = rotate(center, self.D, 360 / 7)
+        self.F = rotate(center, self.E, 360 / 7)
+        self.G = rotate(center, self.F, 360 / 7)
 
-        self.shape = Polygon([self.A, self.B, self.C, self.D, self.E, self.F])
+        self.shape = Polygon([self.A, self.B, self.C, self.D, self.E, self.F, self.G])
 
         self.area = self.shape.area
 

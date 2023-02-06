@@ -192,6 +192,8 @@ class MAPPO(object):
         # perform the PPO update.
         for _ in range(self.k_epochs):
 
+            torch.autograd.set_detect_anomaly(True)
+
             # get new mu, log_std, predicted_action, and predict_values.
             mu, sigma = self.actor(interior_obs, relative_obs)
 
@@ -210,7 +212,6 @@ class MAPPO(object):
 
             # compute the policy loss according to the agent setup.
             if pr > 1.5:
-                torch.autograd.set_detect_anomaly(True)
 
                 # sample a batch of state action pair from the expert dataset.
                 index = torch.randint(self.expert_data.shape[0], (action.shape[0], ))
@@ -263,8 +264,8 @@ class MAPPO(object):
             self.buffer[i].clear_buffer()
 
     def save_model(self, checkpoint):
-        torch.save(self.actor, './trained_model/general_policy_{}.pth'.format(str(checkpoint)))
-        torch.save(self.critic, './trained_model/general_critic_{}.pth'.format(str(checkpoint)))
+        torch.save(self.actor, './trained_model/generic_policy_{}.pth'.format(str(checkpoint)))
+        torch.save(self.critic, './trained_model/generic_critic_{}.pth'.format(str(checkpoint)))
 
     def load_model(self, path, checkpoint):
         self.actor = torch.load(path + './trained_model/generic_policy_{}.pth'.format(str(checkpoint)))

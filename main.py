@@ -3,28 +3,27 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from common.env_utils import make_env
-from common.env_config import square, hexagon, polygon_1, polygon_2, polygon_3, polygon_4
+from common.env_config import square, heptagon, hexagon, pentagon
+from common.env_config import polygon_1, polygon_2, polygon_3, polygon_4, polygon_5, polygon_6, polygon_7, polygon_8
 
 from common.SubprocVecEnv import SubprocVecEnv
 from mappo import MAPPO
 
 if __name__ == '__main__':
 
-    # running 18 parallel environments, contains six types of default shape across 7 to 9 agents.
-    vec_env = SubprocVecEnv([make_env(**square), make_env(**square), make_env(**square),
-                             make_env(**polygon_4), make_env(**polygon_4), make_env(**polygon_4),
-                             make_env(**polygon_3), make_env(**polygon_3), make_env(**polygon_3),
-                             make_env(**polygon_2), make_env(**polygon_2), make_env(**polygon_2),
-                             make_env(**polygon_1), make_env(**polygon_1), make_env(**polygon_1),
-                             make_env(**hexagon), make_env(**hexagon), make_env(**hexagon)])
+    # running 12 parallel environments, contains six types of default shape across 6 to 9 agents.
+    vec_env = SubprocVecEnv([make_env(**square), make_env(**polygon_8), make_env(**polygon_7),
+                             make_env(**heptagon), make_env(**polygon_6), make_env(**polygon_5),
+                             make_env(**hexagon), make_env(**polygon_4), make_env(**polygon_3),
+                             make_env(**pentagon), make_env(**polygon_2), make_env(**polygon_1)])
 
     """ 
       For the demo project, the default setup is to continue training from a pre-trained model, where the pre-trained 
       model is obtained by doing imitation learning to an classical controller, this controller will perform average 
       episodic reward as about -12000. The default setup will give the converged result about 200 iterations.
     """
-    agent = MAPPO(env=vec_env, num_steps=1200, alpha=0.001, beta=0.003, max_std=0.5, clip=0.2, gamma=0.99, k_epochs=16,
-                  use_bcloss=False, bcloss_weight=1, use_init_model=True)
+    agent = MAPPO(env=vec_env, num_steps=1800, alpha=0.0001, beta=0.0005, max_std=0.5, clip=0.2, gamma=0.99,
+                  k_epochs=16, use_bcloss=False, bcloss_weight=1, use_init_model=True)
 
     """ 
       Defined the number of iteration performed for the training. In each iteration we running 18 parallel environments,
@@ -38,7 +37,7 @@ if __name__ == '__main__':
       expert data. For the demo project, this value is obtained from the average episodic reward of 10000 trajectories 
       sampled from the classical controller(this controller is used for imitation learning to get pre-trained model).
     """
-    baseline = -12000
+    baseline = -13500
 
     """ 
       if continue training after some breakpoint is needed， uncomment the following two lines and give the checkpoint.
@@ -57,7 +56,7 @@ if __name__ == '__main__':
         agent.clear_buffer()
 
         end = time.time()
-        training_log.append(log_info)
+        training_log.append(log_info[0])
 
         print("=======================================================================================")
         print("Training Information for Iteration " + str(i + 1) + ":")

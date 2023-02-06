@@ -1,38 +1,13 @@
+"""
+  you can directly run this script to see the behavior of the well trained policy.
+"""
+
 import torch
 import numpy as np
-import random as rand
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from common.env_config import square, hexagon, polygon_1, polygon_2, polygon_3, polygon_4
-from common.env import Custom_Environment
-
-""" 
-  you can directly run this script to observe the behavior of the well trained neural network policy.
-"""
-
-
-def get_random_env():
-    flag = rand.randint(0, 5)
-
-    if flag == 0:
-        return Custom_Environment(**square)
-
-    elif flag == 1:
-        return Custom_Environment(**hexagon)
-
-    elif flag == 2:
-        return Custom_Environment(**polygon_1)
-
-    elif flag == 3:
-        return Custom_Environment(**polygon_2)
-
-    elif flag == 4:
-        return Custom_Environment(**polygon_3)
-
-    elif flag == 4:
-        return Custom_Environment(**polygon_4)
-
+from common.env_utils import get_random_env
 
 # ======================================================================================================================
 # randomly select an environment and play an episode of game.
@@ -57,7 +32,7 @@ done = False
 while not done:
     input_state = torch.FloatTensor(state).to(device)
     agent_self_obs = input_state[0:num_agents, 0:8]
-    agent_relative_obs = input_state[0:num_agents, 8:input_state.size(1)].reshape(num_agents, num_agents - 1, 2)
+    agent_relative_obs = input_state[0:num_agents, 8:input_state.size()[1]].reshape(num_agents, num_agents - 1, 2)
 
     action, _ = policy(agent_self_obs, agent_relative_obs)
     action = action.detach().cpu().numpy()
@@ -123,8 +98,9 @@ plt.show()
 
 t = np.arange(len(returns_record))
 plt.figure(0)
-plt.plot(t, returns_record, linewidth=0.5, color='blue')
-plt.plot(t, value_record, linewidth=0.5, color='red')
-plt.title(label="Critic Loss")
+plt.plot(t, returns_record, linewidth=0.5, color='blue', label='True Returns')
+plt.plot(t, value_record, linewidth=0.5, color='red', label='Estimated State Value')
+plt.title(label="Estimate Values vs True Returns")
+plt.legend()
 plt.grid()
 plt.show()
